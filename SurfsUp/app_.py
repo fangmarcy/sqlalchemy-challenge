@@ -2,14 +2,31 @@ from flask import Flask, jsonify
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from models_2 import Measurement, Station, Base
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Float, Date
 
 # Create the Flask application instance
 app = Flask(__name__)
 
 # Set up the SQLAlchemy engine and session
-engine = create_engine("sqlite:///path//to//your_database.db")
-Base.metadata.create_all(engine)
+engine = create_engine("sqlite:///path/to/your_database.db")
+Base = declarative_base(bind=engine)
+
+class Measurement(Base):
+    __tablename__ = "measurement"
+    id = Column(Integer, primary_key=True)
+    date = Column(Date)
+    prcp = Column(Float)
+    # Add other columns as per your actual data
+
+class Station(Base):
+    __tablename__ = "station"
+    id = Column(Integer, primary_key=True)
+    station = Column(String)
+    # Add other columns as per your actual data
+
+Base.metadata.create_all()
+
 session = Session(bind=engine)
 
 # Define the routes
@@ -123,5 +140,4 @@ def precipitation():
     return jsonify(prcp_dict)
 
 # Run the Flask application
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__
